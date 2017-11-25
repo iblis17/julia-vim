@@ -89,7 +89,7 @@ let s:operators = '\%(' . '\.\%([-+*/^÷%|&!]\|//\|\\\|<<\|>>>\?\)\?=' .
 
 syn case match
 
-syntax cluster juliaExpressions		contains=@juliaParItems,@juliaStringItems,@juliaKeywordItems,@juliaBlocksItems,@juliaTypesItems,@juliaConstItems,@juliaMacroItems,@juliaSymbolItems,@juliaOperatorItems,@juliaNumberItems,@juliaCommentItems,@juliaErrorItems
+syntax cluster juliaExpressions		contains=@juliaParItems,@juliaStringItems,@juliaKeywordItems,@juliaBlocksItems,@juliaTypesItems,@juliaConstItems,@juliaMacroItems,@juliaSymbolItems,@juliaOperatorItems,@juliaNumberItems,@juliaCommentItems,@juliaErrorItems,juliaFunctionCall
 syntax cluster juliaExprsPrintf		contains=@juliaExpressions,@juliaPrintfItems
 
 syntax cluster juliaParItems		contains=juliaParBlock,juliaSqBraBlock,juliaCurBraBlock,juliaQuotedParBlock,juliaQuotedQMarkPar
@@ -310,6 +310,9 @@ let s:interp_dollar = '\([' . s:nonidS_chars . s:uniop_chars . s:binop_chars . '
 exec 'syntax match   juliaDollarVar	display contained "' . s:interp_dollar . s:idregex . '"'
 exec 'syntax region  juliaDollarPar	matchgroup=juliaDollarVar contained start="' .s:interp_dollar . '(" end=")" contains=@juliaExpressions'
 exec 'syntax region  juliaDollarSqBra	matchgroup=juliaDollarVar contained start="' .s:interp_dollar . '\[" end="\]" contains=@juliaExpressions,juliaComprehensionFor,juliaSymbolS,juliaQuotedParBlockS,juliaQuotedQMarkParS'
+
+exec 'syntax match   juliaFunctionCall "' . s:idregex . '\ze("'
+exec 'hi def juliaFunctionCall ctermfg=45'
 
 syntax match   juliaChar		"'\\\?.'" contains=juliaSpecialChar
 syntax match   juliaChar		display "'\\\o\{3\}'" contains=juliaOctalEscapeChar
