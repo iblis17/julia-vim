@@ -17,11 +17,12 @@ setlocal comments=:#
 setlocal commentstring=#%s
 setlocal cinoptions+=#1
 setlocal define=^\\s*macro\\>
+setlocal fo-=t fo+=croql
 
 let b:julia_vim_loaded = 1
 
 let b:undo_ftplugin = "setlocal include< suffixesadd< comments< commentstring<"
-      \ . " define< shiftwidth< expandtab< indentexpr< indentkeys< cinoptions< omnifunc<"
+      \ . " define< fo< shiftwidth< expandtab< indentexpr< indentkeys< cinoptions< omnifunc<"
       \ . " | unlet! b:julia_vim_loaded"
 
 " MatchIt plugin support
@@ -30,7 +31,7 @@ if exists("loaded_matchit")
 
   " note: begin_keywords must contain all blocks in order
   " for nested-structures-skipping to work properly
-  let b:julia_begin_keywords = '\%(\.\s*\)\@<!\<\%(\%(staged\)\?function\|macro\|begin\|mutable\s\+struct\|\%(mutable\s\+\)\@<!struct\|\%(abstract\|primitive\)\s\+type\|\%(\(abstract\|primitive\)\s\+\)\@<!type\|immutable\|let\|do\|\%(bare\)\?module\|quote\|if\|for\|while\|try\)\>'
+  let b:julia_begin_keywords = '\%(\%(\.\s*\)\@<!\|\%(@\s*.\s*\)\@<=\)\<\%(\%(staged\)\?function\|macro\|begin\|mutable\s\+struct\|\%(mutable\s\+\)\@<!struct\|\%(abstract\|primitive\)\s\+type\|\%(\(abstract\|primitive\)\s\+\)\@<!type\|immutable\|let\|do\|\%(bare\)\?module\|quote\|if\|for\|while\|try\)\>'
   let s:macro_regex = '@\%(#\@!\S\)\+\s\+'
   let s:nomacro = '\%(' . s:macro_regex . '\)\@<!'
   let s:yesmacro = s:nomacro . '\%('. s:macro_regex . '\)\+'
@@ -90,6 +91,14 @@ if has("gui_win32")
   let b:browsefilter = "Julia Source Files (*.jl)\t*.jl\n"
   let b:undo_ftplugin = b:undo_ftplugin . " | unlet! b:browsefilter"
 endif
+
+" Lookup documents
+nnoremap <silent><buffer> <Plug>(JuliaDocPrompt) :<C-u>call julia#doc#prompt()<CR>
+command! -nargs=1 -buffer -complete=customlist,julia#doc#complete JuliaDoc call julia#doc#open(<q-args>)
+command! -nargs=1 -buffer JuliaDocKeywordprg call julia#doc#keywordprg(<q-args>)
+setlocal keywordprg=:JuliaDocKeywordprg
+let b:undo_ftplugin .= " | setlocal keywordprg<"
+let b:undo_ftplugin .= " | delcommand JuliaDoc | delcommand JuliaDocKeywordprg"
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
